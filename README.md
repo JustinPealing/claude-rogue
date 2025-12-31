@@ -12,17 +12,43 @@ You're trapped in a dangerous dungeon. Fight your way through 5 increasingly dif
 
 ## Controls
 
-**Desktop:**
-- Arrow Keys or WASD: Move and attack
-- H: Use health potion
-- R: Restart game (when dead or victorious)
+### Primary Controls (Android/Phone Numpad)
 
-**Mobile:**
-- 2: Move Up
-- 8: Move Down
-- 4: Move Left
-- 6: Move Right
-- 5 or H: Use Potion
+**Visual Keymap:**
+```
+┌─────┬─────┬─────┐
+│  1  │  2  │  3  │  ← TOP ROW
+│ ↖   │  ↑  │  ↗  │
+├─────┼─────┼─────┤
+│  4  │  5  │  6  │  ← MIDDLE ROW
+│  ←  │ POT │  →  │
+├─────┼─────┼─────┤
+│  7  │  8  │  9  │  ← BOTTOM ROW
+│ ↙   │  ↓  │  ↘  │
+└─────┴─────┴─────┘
+
+POT = Use Health Potion
+```
+
+**Keys:**
+- **1** = Northwest (up-left)
+- **2** = Up
+- **3** = Northeast (up-right)
+- **4** = Left
+- **5** = Use Health Potion
+- **6** = Right
+- **7** = Southwest (down-left)
+- **8** = Down
+- **9** = Southeast (down-right)
+- **R** = Restart game
+
+**Mobile:** Tap the game to show the keyboard, then use the numpad keys above
+
+### Secondary Controls (Desktop)
+- **Arrow Keys / WASD**: Cardinal movement (up/down/left/right)
+- **Q/E/Z/C**: Diagonal movement (Q=NW, E=NE, Z=SW, C=SE)
+- **H**: Use health potion
+- **R**: Restart game (when dead or victorious)
 
 ## Game Mechanics
 
@@ -52,12 +78,16 @@ When you die, the game is over. Press R to start a new run!
 ## Features
 
 - Procedurally generated dungeons using ROT.js
+- **Field of View (FOV) system** - Explore the darkness! Only see what's in your light radius
+- **8-directional movement** - Move diagonally for tactical positioning
 - Turn-based tactical combat
 - 3 enemy types with AI that hunts the player
 - Health potions for strategic healing
 - Progressive difficulty across 5 levels
+- **Dynamic lighting** - Unexplored areas are dark, explored areas are dim, visible areas are bright
 - Clean UI with health bar, stats, and message log
 - Full keyboard and mobile support
+- Auto-save functionality
 
 ## Technologies
 
