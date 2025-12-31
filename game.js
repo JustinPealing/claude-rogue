@@ -416,18 +416,15 @@ const keyboardProxy = document.getElementById('keyboard-proxy');
 
 // Focus the hidden input when the canvas is tapped/clicked
 canvas.addEventListener('click', () => {
-    console.log('Canvas clicked, focusing keyboard proxy');
     keyboardProxy.focus();
 });
 
 canvas.addEventListener('touchstart', () => {
-    console.log('Canvas touched, focusing keyboard proxy');
     keyboardProxy.focus();
 }, { passive: true });
 
 // Listen for keyboard events on both document and the proxy input
 document.addEventListener('keydown', (e) => {
-    console.log('Document keydown:', e.key, e.code);
     // Prevent default browser actions (like scrolling with arrow keys)
     e.preventDefault();
 
@@ -437,37 +434,29 @@ document.addEventListener('keydown', (e) => {
 
 // Handle input directly from keyboard proxy for Android
 keyboardProxy.addEventListener('input', (e) => {
-    console.log('Proxy input event:', e.data, 'value:', keyboardProxy.value);
     const key = e.data || keyboardProxy.value;
 
     if (key) {
         const char = key.charAt(key.length - 1); // Get last character
-        console.log('Processing character:', char);
 
         switch(char) {
             case '2':
-                console.log('Moving up');
                 movePlayer(0, -1);
                 break;
             case '8':
-                console.log('Moving down');
                 movePlayer(0, 1);
                 break;
             case '4':
-                console.log('Moving left');
                 movePlayer(-1, 0);
                 break;
             case '6':
-                console.log('Moving right');
                 movePlayer(1, 0);
                 break;
             case '5':
-                console.log('Using potion');
                 usePotion();
                 break;
             case 'r':
             case 'R':
-                console.log('Restart requested');
                 if (game.gameOver || game.victory) {
                     restartGame();
                 }
@@ -483,7 +472,6 @@ keyboardProxy.addEventListener('input', (e) => {
 
 // Also handle keydown on the proxy
 keyboardProxy.addEventListener('keydown', (e) => {
-    console.log('Proxy keydown:', e.key, e.code);
     e.preventDefault();
     handleKey(e.code);
 
@@ -511,7 +499,6 @@ keyboardProxy.addEventListener('keydown', (e) => {
 
 // Handle keyup as well for better Android compatibility
 keyboardProxy.addEventListener('keyup', (e) => {
-    console.log('Proxy keyup:', e.key, e.code);
     keyboardProxy.value = '';
 });
 
