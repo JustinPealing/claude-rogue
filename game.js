@@ -9,9 +9,30 @@ const fontSize = isMobile ? 8 : 14;
 
 // Enemy templates
 const ENEMY_TYPES = {
-    goblin: { char: 'g', color: '#8b4513', hp: 15, attack: 3, xp: 10 },
-    orc: { char: 'o', color: '#ff4444', hp: 25, attack: 5, xp: 20 },
-    troll: { char: 'T', color: '#ff00ff', hp: 40, attack: 8, xp: 35 }
+    goblin: {
+        char: 'g',
+        color: '#8b4513',
+        hp: 15,
+        attack: 3,
+        xp: 10,
+        description: 'A small, cunning goblin. Weak but numerous.'
+    },
+    orc: {
+        char: 'o',
+        color: '#ff4444',
+        hp: 25,
+        attack: 5,
+        xp: 20,
+        description: 'A brutal orc warrior. Strong and aggressive.'
+    },
+    troll: {
+        char: 'T',
+        color: '#ff00ff',
+        hp: 40,
+        attack: 8,
+        xp: 35,
+        description: 'A massive troll. Very dangerous and tough to kill.'
+    }
 };
 
 // ===== GAME STATE =====
@@ -23,7 +44,10 @@ let game = {
     map: {},
     freeSpaces: [],
     explored: new Set(), // Tracks explored tiles
-    visible: new Set()   // Tracks currently visible tiles
+    visible: new Set(),  // Tracks currently visible tiles
+    lookMode: false,     // Whether look mode is active
+    lookX: 0,            // X position of look cursor
+    lookY: 0             // Y position of look cursor
 };
 
 let player = {
@@ -178,6 +202,80 @@ function addMessage(text) {
     game.messages.unshift(text);
     if (game.messages.length > 5) {
         game.messages = game.messages.slice(0, 5);
+    }
+}
+
+// ===== LOOK SYSTEM =====
+function getTileDescription(x, y) {
+    const key = x + "," + y;
+
+    // Check if tile is visible or explored
+    const isVisible = game.visible.has(key);
+    const isExplored = game.explored.has(key);
+
+    if (!isVisible && !isExplored) {
+        return "You haven't explored this area yet.";
+    }
+
+    // Check if it's a wall
+    if (!game.map[key]) {
+        return "A solid stone wall.";
+    }
+
+    // Check for enemies (only if visible)
+    if (isVisible) {
+        const enemy = entities.enemies.find(e => e.x === x && e.y === y);
+        if (enemy) {
+            const template = ENEMY_TYPES[enemy.type];
+            return `${enemy.type.charAt(0).toUpperCase() + enemy.type.slice(1)} (${enemy.hp}/${enemy.maxHp} HP) - ${template.description}`;
+        }
+    }
+
+    // Check for items
+    const item = entities.items.find(i => i.x === x && i.y === y);
+    if (item) {
+        if (item.type === 'potion') {
+            return "A health potion. Restores 20 HP when used.";
+        } else if (item.type === 'gold') {
+            return "A pile of gold coins. Valuable treasure!";
+        } else if (item.type === 'stairs') {
+            return "Stairs leading deeper into the dungeon.";
+        }
+    }
+
+    // Check if it's the player
+    if (x === player.x && y === player.y) {
+        return `You (${player.hp}/${player.maxHp} HP, ${player.attack} ATK)`;
+    }
+
+    // Just an empty floor
+    return isVisible ? "An empty stone floor." : "An empty stone floor (remembered).";
+}
+
+function toggleLookMode() {
+    game.lookMode = !game.lookMode;
+
+    if (game.lookMode) {
+        // Start looking at player position
+        game.lookX = player.x;
+        game.lookY = player.y;
+        addMessage("Look mode: Use movement keys to look around. Press L or ESC to exit.");
+    } else {
+        addMessage("Look mode off.");
+    }
+
+    draw();
+}
+
+function moveLookCursor(dx, dy) {
+    const newX = game.lookX + dx;
+    const newY = game.lookY + dy;
+
+    // Allow looking anywhere on the map
+    if (newX >= 0 && newX < WIDTH && newY >= 0 && newY < HEIGHT) {
+        game.lookX = newX;
+        game.lookY = newY;
+        draw();
     }
 }
 
@@ -457,6 +555,11 @@ function draw() {
     const playerColor = player.hp < player.maxHp * 0.3 ? '#ff0000' : '#ffff00';
     display.draw(player.x, player.y, "@", playerColor);
 
+    // Draw look cursor if in look mode
+    if (game.lookMode) {
+        display.draw(game.lookX, game.lookY, "X", "#00ff00");
+    }
+
     // Draw UI
     drawUI();
 }
@@ -489,6 +592,12 @@ function drawUI() {
         </div>
     `;
 
+    // Show look mode description
+    if (game.lookMode) {
+        const description = getTileDescription(game.lookX, game.lookY);
+        html += `<div class="look-mode"><strong>[LOOK MODE]</strong><br>${description}</div>`;
+    }
+
     if (game.gameOver) {
         html += `<div class="game-over">GAME OVER - Press R to Restart</div>`;
     } else if (game.victory) {
@@ -507,6 +616,73 @@ function handleKey(code) {
 
     if (game.gameOver || game.victory) return;
 
+    // Toggle look mode with L key
+    if (code === "KeyL") {
+        toggleLookMode();
+        return;
+    }
+
+    // Exit look mode with ESC
+    if (code === "Escape" && game.lookMode) {
+        toggleLookMode();
+        return;
+    }
+
+    // In look mode, movement keys move the cursor instead of the player
+    if (game.lookMode) {
+        switch (code) {
+            // Vertical movement
+            case "ArrowUp":
+            case "KeyW":
+            case "Numpad2":
+            case "Digit2":
+                moveLookCursor(0, -1); // Up
+                break;
+            case "ArrowDown":
+            case "KeyS":
+            case "Numpad8":
+            case "Digit8":
+                moveLookCursor(0, 1); // Down
+                break;
+            // Horizontal movement
+            case "ArrowLeft":
+            case "KeyA":
+            case "Numpad4":
+            case "Digit4":
+                moveLookCursor(-1, 0); // Left
+                break;
+            case "ArrowRight":
+            case "KeyD":
+            case "Numpad6":
+            case "Digit6":
+                moveLookCursor(1, 0); // Right
+                break;
+            // Diagonal movement (phone layout: 1-2-3 top, 7-8-9 bottom)
+            case "KeyQ":
+            case "Numpad1":
+            case "Digit1":
+                moveLookCursor(-1, -1); // Northwest (1 = up-left)
+                break;
+            case "KeyE":
+            case "Numpad3":
+            case "Digit3":
+                moveLookCursor(1, -1); // Northeast (3 = up-right)
+                break;
+            case "KeyZ":
+            case "Numpad7":
+            case "Digit7":
+                moveLookCursor(-1, 1); // Southwest (7 = down-left)
+                break;
+            case "KeyC":
+            case "Numpad9":
+            case "Digit9":
+                moveLookCursor(1, 1); // Southeast (9 = down-right)
+                break;
+        }
+        return;
+    }
+
+    // Normal game mode - move player
     switch (code) {
         // Vertical movement
         case "ArrowUp":
@@ -593,64 +769,116 @@ keyboardProxy.addEventListener('input', (e) => {
     if (key) {
         const char = key.charAt(key.length - 1); // Get last character
 
-        switch(char) {
-            // Vertical movement (phone layout: 2 at top = up, 8 at bottom = down)
-            case '2':
-                movePlayer(0, -1); // Up
-                break;
-            case '8':
-                movePlayer(0, 1); // Down
-                break;
-            // Horizontal movement
-            case '4':
-                movePlayer(-1, 0); // Left
-                break;
-            case '6':
-                movePlayer(1, 0); // Right
-                break;
-            // Diagonal movement (phone layout: 1-2-3 at top, 7-8-9 at bottom)
-            case '1':
-                movePlayer(-1, -1); // Northwest (up-left)
-                break;
-            case '3':
-                movePlayer(1, -1); // Northeast (up-right)
-                break;
-            case '7':
-                movePlayer(-1, 1); // Southwest (down-left)
-                break;
-            case '9':
-                movePlayer(1, 1); // Southeast (down-right)
-                break;
-            // Q/E/Z/C letter keys (secondary controls)
-            case 'q':
-            case 'Q':
-                movePlayer(-1, -1); // Northwest
-                break;
-            case 'e':
-            case 'E':
-                movePlayer(1, -1); // Northeast
-                break;
-            case 'z':
-            case 'Z':
-                movePlayer(-1, 1); // Southwest
-                break;
-            case 'c':
-            case 'C':
-                movePlayer(1, 1); // Southeast
-                break;
-            // Use potion
-            case '5':
-            case 'h':
-            case 'H':
-                usePotion();
-                break;
-            // Restart
-            case 'r':
-            case 'R':
-                if (game.gameOver || game.victory) {
-                    restartGame();
-                }
-                break;
+        // Toggle look mode
+        if (char === 'l' || char === 'L') {
+            toggleLookMode();
+        }
+        // In look mode, use movement for cursor
+        else if (game.lookMode) {
+            switch(char) {
+                case '2':
+                    moveLookCursor(0, -1); // Up
+                    break;
+                case '8':
+                    moveLookCursor(0, 1); // Down
+                    break;
+                case '4':
+                    moveLookCursor(-1, 0); // Left
+                    break;
+                case '6':
+                    moveLookCursor(1, 0); // Right
+                    break;
+                case '1':
+                    moveLookCursor(-1, -1); // Northwest (up-left)
+                    break;
+                case '3':
+                    moveLookCursor(1, -1); // Northeast (up-right)
+                    break;
+                case '7':
+                    moveLookCursor(-1, 1); // Southwest (down-left)
+                    break;
+                case '9':
+                    moveLookCursor(1, 1); // Southeast (down-right)
+                    break;
+                case 'q':
+                case 'Q':
+                    moveLookCursor(-1, -1); // Northwest
+                    break;
+                case 'e':
+                case 'E':
+                    moveLookCursor(1, -1); // Northeast
+                    break;
+                case 'z':
+                case 'Z':
+                    moveLookCursor(-1, 1); // Southwest
+                    break;
+                case 'c':
+                case 'C':
+                    moveLookCursor(1, 1); // Southeast
+                    break;
+            }
+        }
+        // Normal game mode
+        else {
+            switch(char) {
+                // Vertical movement (phone layout: 2 at top = up, 8 at bottom = down)
+                case '2':
+                    movePlayer(0, -1); // Up
+                    break;
+                case '8':
+                    movePlayer(0, 1); // Down
+                    break;
+                // Horizontal movement
+                case '4':
+                    movePlayer(-1, 0); // Left
+                    break;
+                case '6':
+                    movePlayer(1, 0); // Right
+                    break;
+                // Diagonal movement (phone layout: 1-2-3 at top, 7-8-9 at bottom)
+                case '1':
+                    movePlayer(-1, -1); // Northwest (up-left)
+                    break;
+                case '3':
+                    movePlayer(1, -1); // Northeast (up-right)
+                    break;
+                case '7':
+                    movePlayer(-1, 1); // Southwest (down-left)
+                    break;
+                case '9':
+                    movePlayer(1, 1); // Southeast (down-right)
+                    break;
+                // Q/E/Z/C letter keys (secondary controls)
+                case 'q':
+                case 'Q':
+                    movePlayer(-1, -1); // Northwest
+                    break;
+                case 'e':
+                case 'E':
+                    movePlayer(1, -1); // Northeast
+                    break;
+                case 'z':
+                case 'Z':
+                    movePlayer(-1, 1); // Southwest
+                    break;
+                case 'c':
+                case 'C':
+                    movePlayer(1, 1); // Southeast
+                    break;
+                // Use potion
+                case '5':
+                case 'h':
+                case 'H':
+                    usePotion();
+                    break;
+                // Restart
+                case 'r':
+                case 'R':
+                    if (game.gameOver || game.victory) {
+                        restartGame();
+                    }
+                    break;
+            }
         }
     }
 
@@ -684,7 +912,10 @@ function restartGame() {
         map: {},
         freeSpaces: [],
         explored: new Set(),
-        visible: new Set()
+        visible: new Set(),
+        lookMode: false,
+        lookX: 0,
+        lookY: 0
     };
 
     player = {
