@@ -381,77 +381,125 @@ function handleKey(code) {
         case "ArrowUp":
         case "KeyW":
         case "Numpad8":
+        case "Digit8":
             movePlayer(0, -1);
             break;
         case "ArrowDown":
         case "KeyS":
         case "Numpad2":
+        case "Digit2":
             movePlayer(0, 1);
             break;
         case "ArrowLeft":
         case "KeyA":
         case "Numpad4":
+        case "Digit4":
             movePlayer(-1, 0);
             break;
         case "ArrowRight":
         case "KeyD":
         case "Numpad6":
+        case "Digit6":
             movePlayer(1, 0);
             break;
         case "KeyH":
+        case "Digit5":
+        case "Numpad5":
             usePotion();
             break;
     }
 }
 
-window.addEventListener("keydown", (e) => {
-    handleKey(e.code);
-    e.preventDefault();
+// ===== ANDROID KEYBOARD SUPPORT =====
+const canvas = display.getContainer();
+const keyboardProxy = document.getElementById('keyboard-proxy');
+
+// Focus the hidden input when the canvas is tapped/clicked
+canvas.addEventListener('click', () => {
+    keyboardProxy.focus();
 });
 
-// Mobile input handling
-const mobileInput = document.getElementById('mobileInput');
+canvas.addEventListener('touchstart', () => {
+    keyboardProxy.focus();
+}, { passive: true });
 
-// Prevent scroll on focus
-mobileInput.addEventListener('focus', function(e) {
-    // Save current scroll position
-    const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
+// Listen for keyboard events on both document and the proxy input
+document.addEventListener('keydown', (e) => {
+    // Prevent default browser actions (like scrolling with arrow keys)
+    e.preventDefault();
 
-    // Restore scroll position after focus
+    // Handle the key press
+    handleKey(e.code);
+});
+
+// Handle input directly from keyboard proxy for Android
+keyboardProxy.addEventListener('input', (e) => {
+    const key = e.data || keyboardProxy.value;
+
+    if (key) {
+        const char = key.charAt(key.length - 1); // Get last character
+
+        switch(char) {
+            case '2':
+                movePlayer(0, -1);
+                break;
+            case '8':
+                movePlayer(0, 1);
+                break;
+            case '4':
+                movePlayer(-1, 0);
+                break;
+            case '6':
+                movePlayer(1, 0);
+                break;
+            case '5':
+                usePotion();
+                break;
+            case 'r':
+            case 'R':
+                if (game.gameOver || game.victory) {
+                    restartGame();
+                }
+                break;
+        }
+    }
+
+    // Clear the input to prevent autocomplete
     setTimeout(() => {
-        window.scrollTo(scrollX, scrollY);
+        keyboardProxy.value = '';
     }, 0);
 });
 
-mobileInput.addEventListener('keydown', function(e) {
-    switch(e.key) {
-        case '2':
-            movePlayer(0, -1);
-            break;
-        case '8':
-            movePlayer(0, 1);
-            break;
-        case '4':
-            movePlayer(-1, 0);
-            break;
-        case '6':
-            movePlayer(1, 0);
-            break;
-        case '5':
-        case 'h':
-            usePotion();
-            break;
-    }
+// Also handle keydown on the proxy
+keyboardProxy.addEventListener('keydown', (e) => {
     e.preventDefault();
-    this.value = '';
+    handleKey(e.code);
+
+    // Also try handling by key value
+    if (e.key) {
+        switch(e.key) {
+            case '2':
+                movePlayer(0, -1);
+                break;
+            case '8':
+                movePlayer(0, 1);
+                break;
+            case '4':
+                movePlayer(-1, 0);
+                break;
+            case '6':
+                movePlayer(1, 0);
+                break;
+            case '5':
+                usePotion();
+                break;
+        }
+    }
 });
 
-// Keep input focused for mobile, but don't auto-focus on load
-mobileInput.addEventListener('blur', function() {
-    if (isMobile) {
-        setTimeout(() => this.focus(), 0);
-    }
+// Handle keyup as well for better Android compatibility
+keyboardProxy.addEventListener('keyup', (e) => {
+    keyboardProxy.value = '';
 });
 
 // ===== GAME INITIALIZATION =====
@@ -486,10 +534,3 @@ function restartGame() {
 
 // Start the game!
 restartGame();
-
-// Only auto-focus on mobile after user interaction to avoid scroll
-if (isMobile) {
-    document.body.addEventListener('touchstart', function() {
-        mobileInput.focus();
-    }, { once: true });
-}
