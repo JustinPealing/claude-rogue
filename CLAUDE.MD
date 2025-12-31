@@ -59,23 +59,35 @@ The game uses a hidden keyboard proxy input to trigger the Android virtual keybo
    - Value cleared immediately after each keystroke
 
 ### PRIMARY Controls (Android/Numpad - Highest Priority)
+
+**CRITICAL: Phone numpad layout has 1-2-3 at TOP (not bottom like PC numpad)**
+
 ```
-7  8  9     (NW) (Up) (NE)
-4  5  6     (Left)(Potion)(Right)
-1  2  3     (SW)(Down)(SE)
+Phone Numpad Layout:
+┌─────┬─────┬─────┐
+│  1  │  2  │  3  │  ← TOP ROW
+│ ↖   │  ↑  │  ↗  │
+├─────┼─────┼─────┤
+│  4  │  5  │  6  │  ← MIDDLE ROW
+│  ←  │  🧪  │  →  │
+├─────┼─────┼─────┤
+│  7  │  8  │  9  │  ← BOTTOM ROW
+│ ↙   │  ↓  │  ↘  │
+└─────┴─────┴─────┘
 ```
-- **7** = Northwest diagonal
-- **8** = Move Down (not up!)
-- **9** = Northeast diagonal
+
+- **1** = Northwest (up-left) diagonal
+- **2** = Move Up
+- **3** = Northeast (up-right) diagonal
 - **4** = Move Left
 - **5** = Use Potion
 - **6** = Move Right
-- **1** = Southwest diagonal
-- **2** = Move Up (not down!)
-- **3** = Southeast diagonal
+- **7** = Southwest (down-left) diagonal
+- **8** = Move Down
+- **9** = Southeast (down-right) diagonal
 - **R** = Restart
 
-**Note:** Numpad 2/8 seem backwards, but they match standard phone numpad layout (2 at top = up)
+**Remember:** On phones, 2 is at the TOP so it moves UP. This is opposite of PC numpads!
 
 ### SECONDARY Controls (Desktop - Lower Priority)
 - Arrow Keys or WASD for cardinal movement

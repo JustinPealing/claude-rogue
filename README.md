@@ -12,19 +12,43 @@ You're trapped in a dangerous dungeon. Fight your way through 5 increasingly dif
 
 ## Controls
 
-**Desktop:**
-- Arrow Keys or WASD: Move and attack (cardinal directions)
-- Q/E/Z/C: Diagonal movement (Q=NW, E=NE, Z=SW, C=SE)
-- Numpad: Full 8-directional movement (7,8,9 / 4,5,6 / 1,2,3)
-- H or 5: Use health potion
-- R: Restart game (when dead or victorious)
+### Primary Controls (Android/Phone Numpad)
 
-**Mobile:**
-- Tap the game to show keyboard
-- Numpad: 7,9,1,3 for diagonal movement
-- 2,8,4,6 for cardinal movement
-- Q/E/Z/C keys also work for diagonal
-- 5 or H: Use Potion
+**Visual Keymap:**
+```
+┌─────┬─────┬─────┐
+│  1  │  2  │  3  │  ← TOP ROW
+│ ↖   │  ↑  │  ↗  │
+├─────┼─────┼─────┤
+│  4  │  5  │  6  │  ← MIDDLE ROW
+│  ←  │ POT │  →  │
+├─────┼─────┼─────┤
+│  7  │  8  │  9  │  ← BOTTOM ROW
+│ ↙   │  ↓  │  ↘  │
+└─────┴─────┴─────┘
+
+POT = Use Health Potion
+```
+
+**Keys:**
+- **1** = Northwest (up-left)
+- **2** = Up
+- **3** = Northeast (up-right)
+- **4** = Left
+- **5** = Use Health Potion
+- **6** = Right
+- **7** = Southwest (down-left)
+- **8** = Down
+- **9** = Southeast (down-right)
+- **R** = Restart game
+
+**Mobile:** Tap the game to show the keyboard, then use the numpad keys above
+
+### Secondary Controls (Desktop)
+- **Arrow Keys / WASD**: Cardinal movement (up/down/left/right)
+- **Q/E/Z/C**: Diagonal movement (Q=NW, E=NE, Z=SW, C=SE)
+- **H**: Use health potion
+- **R**: Restart game (when dead or victorious)
 
 ## Game Mechanics
 

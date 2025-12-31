@@ -508,49 +508,49 @@ function handleKey(code) {
         // Vertical movement
         case "ArrowUp":
         case "KeyW":
-        case "Numpad8":
-        case "Digit8":
-            movePlayer(0, -1);
+        case "Numpad2":
+        case "Digit2":
+            movePlayer(0, -1); // Up
             break;
         case "ArrowDown":
         case "KeyS":
-        case "Numpad2":
-        case "Digit2":
-            movePlayer(0, 1);
+        case "Numpad8":
+        case "Digit8":
+            movePlayer(0, 1); // Down
             break;
         // Horizontal movement
         case "ArrowLeft":
         case "KeyA":
         case "Numpad4":
         case "Digit4":
-            movePlayer(-1, 0);
+            movePlayer(-1, 0); // Left
             break;
         case "ArrowRight":
         case "KeyD":
         case "Numpad6":
         case "Digit6":
-            movePlayer(1, 0);
+            movePlayer(1, 0); // Right
             break;
-        // Diagonal movement
+        // Diagonal movement (phone layout: 1-2-3 top, 7-8-9 bottom)
         case "KeyQ":
-        case "Numpad7":
-        case "Digit7":
-            movePlayer(-1, -1); // Northwest
-            break;
-        case "KeyE":
-        case "Numpad9":
-        case "Digit9":
-            movePlayer(1, -1); // Northeast
-            break;
-        case "KeyZ":
         case "Numpad1":
         case "Digit1":
-            movePlayer(-1, 1); // Southwest
+            movePlayer(-1, -1); // Northwest (1 = up-left)
             break;
-        case "KeyC":
+        case "KeyE":
         case "Numpad3":
         case "Digit3":
-            movePlayer(1, 1); // Southeast
+            movePlayer(1, -1); // Northeast (3 = up-right)
+            break;
+        case "KeyZ":
+        case "Numpad7":
+        case "Digit7":
+            movePlayer(-1, 1); // Southwest (7 = down-left)
+            break;
+        case "KeyC":
+        case "Numpad9":
+        case "Digit9":
+            movePlayer(1, 1); // Southeast (9 = down-right)
             break;
         // Use potion
         case "KeyH":
@@ -591,37 +591,46 @@ keyboardProxy.addEventListener('input', (e) => {
         const char = key.charAt(key.length - 1); // Get last character
 
         switch(char) {
-            // Vertical movement
-            case '8':
+            // Vertical movement (phone layout: 2 at top = up, 8 at bottom = down)
+            case '2':
                 movePlayer(0, -1); // Up
                 break;
-            case '2':
+            case '8':
                 movePlayer(0, 1); // Down
                 break;
             // Horizontal movement
             case '4':
-                movePlayer(-1, 0);
+                movePlayer(-1, 0); // Left
                 break;
             case '6':
-                movePlayer(1, 0);
+                movePlayer(1, 0); // Right
                 break;
-            // Diagonal movement
+            // Diagonal movement (phone layout: 1-2-3 at top, 7-8-9 at bottom)
+            case '1':
+                movePlayer(-1, -1); // Northwest (up-left)
+                break;
+            case '3':
+                movePlayer(1, -1); // Northeast (up-right)
+                break;
             case '7':
+                movePlayer(-1, 1); // Southwest (down-left)
+                break;
+            case '9':
+                movePlayer(1, 1); // Southeast (down-right)
+                break;
+            // Q/E/Z/C letter keys (secondary controls)
             case 'q':
             case 'Q':
                 movePlayer(-1, -1); // Northwest
                 break;
-            case '9':
             case 'e':
             case 'E':
                 movePlayer(1, -1); // Northeast
                 break;
-            case '1':
             case 'z':
             case 'Z':
                 movePlayer(-1, 1); // Southwest
                 break;
-            case '3':
             case 'c':
             case 'C':
                 movePlayer(1, 1); // Southeast
