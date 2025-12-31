@@ -422,21 +422,24 @@ function draw() {
         // Unexplored tiles are not drawn (stay black)
     }
 
-    // Draw items (only if visible)
+    // Draw items (shown if visible OR explored, but dimmed if not currently visible)
     for (let item of entities.items) {
         const key = item.x + "," + item.y;
-        if (!game.visible.has(key)) continue;
+        const isVisible = game.visible.has(key);
+        const isExplored = game.explored.has(key);
+
+        if (!isVisible && !isExplored) continue; // Skip if never seen
 
         let char, color;
         if (item.type === 'potion') {
             char = '!';
-            color = '#ff00ff';
+            color = isVisible ? '#ff00ff' : '#660066'; // Dim magenta when not visible
         } else if (item.type === 'gold') {
             char = '$';
-            color = '#ffd700';
+            color = isVisible ? '#ffd700' : '#665500'; // Dim gold when not visible
         } else if (item.type === 'stairs') {
             char = '>';
-            color = '#00ffff';
+            color = isVisible ? '#00ffff' : '#006666'; // Dim cyan when not visible
         }
         display.draw(item.x, item.y, char, color);
     }
