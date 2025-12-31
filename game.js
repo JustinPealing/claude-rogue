@@ -776,94 +776,94 @@ keyboardProxy.addEventListener('input', (e) => {
         // In look mode, use movement for cursor
         else if (game.lookMode) {
             switch(char) {
+                // WASD movement
+                case 'w':
+                case 'W':
                 case '2':
                     moveLookCursor(0, -1); // Up
                     break;
+                case 's':
+                case 'S':
                 case '8':
                     moveLookCursor(0, 1); // Down
                     break;
+                case 'a':
+                case 'A':
                 case '4':
                     moveLookCursor(-1, 0); // Left
                     break;
+                case 'd':
+                case 'D':
                 case '6':
                     moveLookCursor(1, 0); // Right
                     break;
+                // Diagonal movement
+                case 'q':
+                case 'Q':
                 case '1':
                     moveLookCursor(-1, -1); // Northwest (up-left)
                     break;
+                case 'e':
+                case 'E':
                 case '3':
                     moveLookCursor(1, -1); // Northeast (up-right)
                     break;
+                case 'z':
+                case 'Z':
                 case '7':
                     moveLookCursor(-1, 1); // Southwest (down-left)
                     break;
-                case '9':
-                    moveLookCursor(1, 1); // Southeast (down-right)
-                    break;
-                case 'q':
-                case 'Q':
-                    moveLookCursor(-1, -1); // Northwest
-                    break;
-                case 'e':
-                case 'E':
-                    moveLookCursor(1, -1); // Northeast
-                    break;
-                case 'z':
-                case 'Z':
-                    moveLookCursor(-1, 1); // Southwest
-                    break;
                 case 'c':
                 case 'C':
-                    moveLookCursor(1, 1); // Southeast
+                case '9':
+                    moveLookCursor(1, 1); // Southeast (down-right)
                     break;
             }
         }
         // Normal game mode
         else {
             switch(char) {
-                // Vertical movement (phone layout: 2 at top = up, 8 at bottom = down)
+                // WASD and numpad movement
+                case 'w':
+                case 'W':
                 case '2':
                     movePlayer(0, -1); // Up
                     break;
+                case 's':
+                case 'S':
                 case '8':
                     movePlayer(0, 1); // Down
                     break;
-                // Horizontal movement
+                case 'a':
+                case 'A':
                 case '4':
                     movePlayer(-1, 0); // Left
                     break;
+                case 'd':
+                case 'D':
                 case '6':
                     movePlayer(1, 0); // Right
                     break;
-                // Diagonal movement (phone layout: 1-2-3 at top, 7-8-9 at bottom)
+                // Diagonal movement (QEZC and numpad)
+                case 'q':
+                case 'Q':
                 case '1':
                     movePlayer(-1, -1); // Northwest (up-left)
                     break;
+                case 'e':
+                case 'E':
                 case '3':
                     movePlayer(1, -1); // Northeast (up-right)
                     break;
+                case 'z':
+                case 'Z':
                 case '7':
                     movePlayer(-1, 1); // Southwest (down-left)
                     break;
-                case '9':
-                    movePlayer(1, 1); // Southeast (down-right)
-                    break;
-                // Q/E/Z/C letter keys (secondary controls)
-                case 'q':
-                case 'Q':
-                    movePlayer(-1, -1); // Northwest
-                    break;
-                case 'e':
-                case 'E':
-                    movePlayer(1, -1); // Northeast
-                    break;
-                case 'z':
-                case 'Z':
-                    movePlayer(-1, 1); // Southwest
-                    break;
                 case 'c':
                 case 'C':
-                    movePlayer(1, 1); // Southeast
+                case '9':
+                    movePlayer(1, 1); // Southeast (down-right)
                     break;
                 // Use potion
                 case '5':
