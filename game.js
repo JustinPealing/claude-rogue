@@ -381,77 +381,60 @@ function handleKey(code) {
         case "ArrowUp":
         case "KeyW":
         case "Numpad8":
+        case "Digit8":
             movePlayer(0, -1);
             break;
         case "ArrowDown":
         case "KeyS":
         case "Numpad2":
+        case "Digit2":
             movePlayer(0, 1);
             break;
         case "ArrowLeft":
         case "KeyA":
         case "Numpad4":
+        case "Digit4":
             movePlayer(-1, 0);
             break;
         case "ArrowRight":
         case "KeyD":
         case "Numpad6":
+        case "Digit6":
             movePlayer(1, 0);
             break;
         case "KeyH":
+        case "Digit5":
+        case "Numpad5":
             usePotion();
             break;
     }
 }
 
-window.addEventListener("keydown", (e) => {
+// ===== ANDROID KEYBOARD SUPPORT =====
+const canvas = display.getContainer();
+const keyboardProxy = document.getElementById('keyboard-proxy');
+
+// Focus the hidden input when the canvas is tapped/clicked
+canvas.addEventListener('click', () => {
+    keyboardProxy.focus();
+});
+
+canvas.addEventListener('touchstart', () => {
+    keyboardProxy.focus();
+}, { passive: true });
+
+// Listen for keyboard events on the document
+document.addEventListener('keydown', (e) => {
+    // Prevent default browser actions (like scrolling with arrow keys)
+    e.preventDefault();
+
+    // Handle the key press
     handleKey(e.code);
+});
+
+document.addEventListener('keyup', (e) => {
     e.preventDefault();
-});
-
-// Mobile input handling
-const mobileInput = document.getElementById('mobileInput');
-
-// Prevent scroll on focus
-mobileInput.addEventListener('focus', function(e) {
-    // Save current scroll position
-    const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
-
-    // Restore scroll position after focus
-    setTimeout(() => {
-        window.scrollTo(scrollX, scrollY);
-    }, 0);
-});
-
-mobileInput.addEventListener('keydown', function(e) {
-    switch(e.key) {
-        case '2':
-            movePlayer(0, -1);
-            break;
-        case '8':
-            movePlayer(0, 1);
-            break;
-        case '4':
-            movePlayer(-1, 0);
-            break;
-        case '6':
-            movePlayer(1, 0);
-            break;
-        case '5':
-        case 'h':
-            usePotion();
-            break;
-    }
-    e.preventDefault();
-    this.value = '';
-});
-
-// Keep input focused for mobile, but don't auto-focus on load
-mobileInput.addEventListener('blur', function() {
-    if (isMobile) {
-        setTimeout(() => this.focus(), 0);
-    }
+    // Handle key release events if needed in the future
 });
 
 // ===== GAME INITIALIZATION =====
@@ -486,10 +469,3 @@ function restartGame() {
 
 // Start the game!
 restartGame();
-
-// Only auto-focus on mobile after user interaction to avoid scroll
-if (isMobile) {
-    document.body.addEventListener('touchstart', function() {
-        mobileInput.focus();
-    }, { once: true });
-}

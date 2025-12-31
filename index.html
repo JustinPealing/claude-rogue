@@ -11,11 +11,13 @@
     <div id="game"></div>
     <div id="ui"></div>
 
+    <!-- Hidden keyboard proxy for Android support -->
+    <input type="text" id="keyboard-proxy" aria-label="Game Input Proxy">
+
     <div id="controls">
-        <input type="text" id="mobileInput" inputmode="numeric" placeholder="Tap to move">
         <div class="instructions">
-            Arrow Keys/WASD: Move | H/5: Use Potion | R: Restart<br>
-            Mobile: 2=Up, 8=Down, 4=Left, 6=Right, 5=Potion
+            Arrow Keys/WASD: Move | H: Use Potion | R: Restart<br>
+            Mobile: Tap game to show keyboard, then use arrow keys/WASD
         </div>
     </div>
 

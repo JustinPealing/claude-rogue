@@ -129,40 +129,25 @@ canvas {
     50% { opacity: 0.7; }
 }
 
+/* Hidden keyboard proxy for Android support */
+#keyboard-proxy {
+    position: absolute;
+    left: -100px;
+    top: -100px;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
 #controls {
     margin-top: 10px;
     text-align: center;
-}
-
-#mobileInput {
-    width: 100%;
-    max-width: 300px;
-    padding: 15px;
-    font-size: 24px;
-    background-color: #222;
-    color: #0f0;
-    border: 2px solid #0f0;
-    border-radius: 5px;
-    text-align: center;
-    font-family: monospace;
-}
-
-#mobileInput:focus {
-    outline: none;
-    border-color: #0ff;
-    background-color: #333;
 }
 
 .instructions {
     color: #0f0;
     margin-top: 10px;
     font-size: 14px;
-}
-
-/* Prevent mobile scroll issues */
-#mobileInput {
-    position: relative;
-    -webkit-user-select: text;
 }
 
 /* Mobile optimizations */
