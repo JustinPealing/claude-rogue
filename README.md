@@ -1,47 +1,83 @@
-# Roguelike Game
+# DUNGEON ESCAPE
 
-A browser-based roguelike game built with [ROT.js](https://ondras.github.io/rot.js/hp/).
+A complete roguelike game created for a game jam! Escape from a 5-level procedurally generated dungeon filled with monsters, treasure, and danger.
 
-## About
+## How to Play
 
-This is a roguelike game designed to run on mobile devices through GitHub Pages.
+Simply open `index.html` in a web browser to start playing!
 
-## Technology
+## Game Overview
 
-- **ROT.js** - Roguelike Toolkit in JavaScript, specifically designed for creating roguelike games
-- Pure HTML/CSS/JavaScript - No build process required
-- Mobile-friendly viewport settings
+You're trapped in a dangerous dungeon. Fight your way through 5 increasingly difficult levels, collect gold and potions, and find the stairs to escape!
 
-## Getting Started
+## Controls
 
-### Play Online
+**Desktop:**
+- Arrow Keys or WASD: Move and attack
+- H: Use health potion
+- R: Restart game (when dead or victorious)
 
-Visit the GitHub Pages site: [Coming Soon]
+**Mobile:**
+- 2: Move Up
+- 8: Move Down
+- 4: Move Left
+- 6: Move Right
+- 5 or H: Use Potion
 
-### Run Locally
+## Game Mechanics
 
-1. Clone this repository
-2. Open `index.html` in your web browser
-3. That's it! No build process needed.
+### Combat
+- Bump into enemies to attack them
+- Turn-based: each move triggers enemy movement and attacks
+- Damage has random variance (-2 to +2 from base attack)
 
-## Development
+### Enemies
+- **Goblin (g)**: Weak but numerous - 15 HP, 3 ATK
+- **Orc (o)**: Moderate threat - 25 HP, 5 ATK
+- **Troll (T)**: Powerful foe - 40 HP, 8 ATK
 
-The game uses ROT.js, which provides:
-- Display rendering (using canvas or DOM)
-- Map generation algorithms
-- Field of view (FOV) calculations
-- Path finding
-- Random number generation
-- And more!
+Enemy difficulty scales with dungeon level!
 
-## Why ROT.js?
+### Items
+- **Health Potion (!)**: Restores 20 HP when used with 'H' key
+- **Gold ($)**: Collect for score (10-30 gold per pile)
+- **Stairs (>)**: Walk onto them to descend to the next level
 
-ROT.js is perfect for roguelikes because it:
-- Works in any modern browser (including mobile)
-- Provides built-in roguelike-specific features
-- Has no dependencies
-- Is lightweight and fast
-- Can be included via CDN (no build process needed)
+### Victory Condition
+Reach the stairs on Level 5 to escape and win!
+
+### Permadeath
+When you die, the game is over. Press R to start a new run!
+
+## Features
+
+- Procedurally generated dungeons using ROT.js
+- Turn-based tactical combat
+- 3 enemy types with AI that hunts the player
+- Health potions for strategic healing
+- Progressive difficulty across 5 levels
+- Clean UI with health bar, stats, and message log
+- Full keyboard and mobile support
+
+## Technologies
+
+- ROT.js - Roguelike toolkit for dungeon generation
+- Vanilla JavaScript
+- HTML5 Canvas
+
+## Game Jam Scope
+
+This game was designed to be a complete, well-rounded roguelike experience that could be built in an evening, perfect for a game jam!
+
+**Core Features:**
+- ✓ Procedural generation
+- ✓ Turn-based gameplay
+- ✓ Combat system
+- ✓ Multiple enemy types
+- ✓ Items and inventory
+- ✓ Victory and lose conditions
+- ✓ Progressive difficulty
+- ✓ Clean UI
 
 ## License
 
