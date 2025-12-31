@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roguelike Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #000;
+            color: #fff;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #0f0;
+            margin-bottom: 20px;
+        }
+
+        #game {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            border: 2px solid #0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hello World - Roguelike</h1>
+    <div id="game"></div>
+
+    <!-- Include ROT.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/rot-js@2/dist/rot.min.js"></script>
+
+    <script>
+        // Create a display
+        const display = new ROT.Display({
+            width: 40,
+            height: 20,
+            fontSize: 16
+        });
+
+        // Add it to the page
+        document.getElementById('game').appendChild(display.getContainer());
+
+        // Draw "Hello World" in the center
+        const centerX = Math.floor(display._options.width / 2);
+        const centerY = Math.floor(display._options.height / 2);
+
+        display.drawText(centerX - 5, centerY, "Hello World!");
+
+        // Draw a simple border
+        for (let x = 0; x < display._options.width; x++) {
+            display.draw(x, 0, "#", "#0f0");
+            display.draw(x, display._options.height - 1, "#", "#0f0");
+        }
+
+        for (let y = 0; y < display._options.height; y++) {
+            display.draw(0, y, "#", "#0f0");
+            display.draw(display._options.width - 1, y, "#", "#0f0");
+        }
+
+        // Draw a simple @ symbol (player character) below the text
+        display.draw(centerX, centerY + 2, "@", "#ff0");
+
+        console.log("ROT.js loaded successfully!");
+        console.log("Hello World Roguelike initialized!");
+    </script>
+</body>
+</html>
