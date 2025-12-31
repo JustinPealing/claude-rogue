@@ -13,15 +13,17 @@ You're trapped in a dangerous dungeon. Fight your way through 5 increasingly dif
 ## Controls
 
 **Desktop:**
-- Arrow Keys or WASD: Move and attack
-- H: Use health potion
+- Arrow Keys or WASD: Move and attack (cardinal directions)
+- Q/E/Z/C: Diagonal movement (Q=NW, E=NE, Z=SW, C=SE)
+- Numpad: Full 8-directional movement (7,8,9 / 4,5,6 / 1,2,3)
+- H or 5: Use health potion
 - R: Restart game (when dead or victorious)
 
 **Mobile:**
-- 2: Move Up
-- 8: Move Down
-- 4: Move Left
-- 6: Move Right
+- Tap the game to show keyboard
+- Numpad: 7,9,1,3 for diagonal movement
+- 2,8,4,6 for cardinal movement
+- Q/E/Z/C keys also work for diagonal
 - 5 or H: Use Potion
 
 ## Game Mechanics
@@ -52,12 +54,16 @@ When you die, the game is over. Press R to start a new run!
 ## Features
 
 - Procedurally generated dungeons using ROT.js
+- **Field of View (FOV) system** - Explore the darkness! Only see what's in your light radius
+- **8-directional movement** - Move diagonally for tactical positioning
 - Turn-based tactical combat
 - 3 enemy types with AI that hunts the player
 - Health potions for strategic healing
 - Progressive difficulty across 5 levels
+- **Dynamic lighting** - Unexplored areas are dark, explored areas are dim, visible areas are bright
 - Clean UI with health bar, stats, and message log
 - Full keyboard and mobile support
+- Auto-save functionality
 
 ## Technologies
 

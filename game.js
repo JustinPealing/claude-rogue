@@ -21,7 +21,9 @@ let game = {
     victory: false,
     messages: [],
     map: {},
-    freeSpaces: []
+    freeSpaces: [],
+    explored: new Set(), // Tracks explored tiles
+    visible: new Set()   // Tracks currently visible tiles
 };
 
 let player = {
@@ -46,6 +48,27 @@ const display = new ROT.Display({
     fontSize: fontSize
 });
 document.getElementById('game').appendChild(display.getContainer());
+
+// ===== FOV SYSTEM =====
+const FOV_RADIUS = 8; // How far the player can see
+let fov = null; // Will be initialized with the map
+
+function initFOV() {
+    fov = new ROT.FOV.PreciseShadowcasting((x, y) => {
+        const key = x + "," + y;
+        return game.map[key] === "floor"; // Light passes through floors, not walls
+    });
+}
+
+function computeFOV() {
+    game.visible.clear();
+
+    fov.compute(player.x, player.y, FOV_RADIUS, (x, y, r, visibility) => {
+        const key = x + "," + y;
+        game.visible.add(key);
+        game.explored.add(key); // Mark as explored when seen
+    });
+}
 
 // ===== DUNGEON GENERATION =====
 function generateDungeon() {
@@ -138,6 +161,12 @@ function initLevel() {
     spawnEnemies();
     spawnItems();
 
+    // Initialize FOV system for this level
+    game.explored.clear();
+    game.visible.clear();
+    initFOV();
+    computeFOV();
+
     addMessage(`=== LEVEL ${game.currentLevel} ===`);
     if (game.currentLevel === 1) {
         addMessage("Escape the dungeon! Find the stairs (>)");
@@ -160,7 +189,9 @@ function saveGame() {
             gameOver: game.gameOver,
             victory: game.victory,
             messages: game.messages,
-            map: game.map
+            map: game.map,
+            explored: Array.from(game.explored), // Convert Set to Array
+            visible: Array.from(game.visible)
         },
         player: {
             x: player.x,
@@ -194,6 +225,10 @@ function loadGame() {
         game.messages = data.game.messages;
         game.map = data.game.map;
 
+        // Restore FOV data (convert Arrays back to Sets)
+        game.explored = new Set(data.game.explored || []);
+        game.visible = new Set(data.game.visible || []);
+
         // Restore player state
         player.x = data.player.x;
         player.y = data.player.y;
@@ -206,6 +241,9 @@ function loadGame() {
         // Restore entities
         entities.enemies = data.entities.enemies;
         entities.items = data.entities.items;
+
+        // Reinitialize FOV after loading
+        initFOV();
 
         return true;
     } catch (e) {
@@ -259,6 +297,9 @@ function movePlayer(dx, dy) {
     // Move player
     player.x = newX;
     player.y = newY;
+
+    // Recompute FOV from new position
+    computeFOV();
 
     // Check for item pickup
     const item = entities.items.find(i => i.x === newX && i.y === newY);
@@ -361,16 +402,30 @@ function enemyTurn() {
 function draw() {
     display.clear();
 
-    // Draw map
+    // Draw map with FOV
     for (let key in game.map) {
         const parts = key.split(",");
         const x = parseInt(parts[0]);
         const y = parseInt(parts[1]);
-        display.draw(x, y, ".", "#666");
+
+        const isVisible = game.visible.has(key);
+        const isExplored = game.explored.has(key);
+
+        if (isVisible) {
+            // Visible tiles - full brightness
+            display.draw(x, y, ".", "#666");
+        } else if (isExplored) {
+            // Explored but not visible - dim
+            display.draw(x, y, ".", "#222");
+        }
+        // Unexplored tiles are not drawn (stay black)
     }
 
-    // Draw items
+    // Draw items (only if visible)
     for (let item of entities.items) {
+        const key = item.x + "," + item.y;
+        if (!game.visible.has(key)) continue;
+
         let char, color;
         if (item.type === 'potion') {
             char = '!';
@@ -385,13 +440,16 @@ function draw() {
         display.draw(item.x, item.y, char, color);
     }
 
-    // Draw enemies
+    // Draw enemies (only if visible)
     for (let enemy of entities.enemies) {
+        const key = enemy.x + "," + enemy.y;
+        if (!game.visible.has(key)) continue;
+
         const template = ENEMY_TYPES[enemy.type];
         display.draw(enemy.x, enemy.y, template.char, template.color);
     }
 
-    // Draw player
+    // Draw player (always visible)
     const playerColor = player.hp < player.maxHp * 0.3 ? '#ff0000' : '#ffff00';
     display.draw(player.x, player.y, "@", playerColor);
 
@@ -446,6 +504,7 @@ function handleKey(code) {
     if (game.gameOver || game.victory) return;
 
     switch (code) {
+        // Vertical movement
         case "ArrowUp":
         case "KeyW":
         case "Numpad8":
@@ -458,6 +517,7 @@ function handleKey(code) {
         case "Digit2":
             movePlayer(0, 1);
             break;
+        // Horizontal movement
         case "ArrowLeft":
         case "KeyA":
         case "Numpad4":
@@ -470,6 +530,28 @@ function handleKey(code) {
         case "Digit6":
             movePlayer(1, 0);
             break;
+        // Diagonal movement
+        case "KeyQ":
+        case "Numpad7":
+        case "Digit7":
+            movePlayer(-1, -1); // Northwest
+            break;
+        case "KeyE":
+        case "Numpad9":
+        case "Digit9":
+            movePlayer(1, -1); // Northeast
+            break;
+        case "KeyZ":
+        case "Numpad1":
+        case "Digit1":
+            movePlayer(-1, 1); // Southwest
+            break;
+        case "KeyC":
+        case "Numpad3":
+        case "Digit3":
+            movePlayer(1, 1); // Southeast
+            break;
+        // Use potion
         case "KeyH":
         case "Digit5":
         case "Numpad5":
@@ -508,23 +590,48 @@ keyboardProxy.addEventListener('input', (e) => {
         const char = key.charAt(key.length - 1); // Get last character
 
         switch(char) {
+            // Vertical movement
             case '2':
                 movePlayer(0, -1);
                 break;
             case '8':
                 movePlayer(0, 1);
                 break;
+            // Horizontal movement
             case '4':
                 movePlayer(-1, 0);
                 break;
             case '6':
                 movePlayer(1, 0);
                 break;
+            // Diagonal movement
+            case '7':
+            case 'q':
+            case 'Q':
+                movePlayer(-1, -1); // Northwest
+                break;
+            case '9':
+            case 'e':
+            case 'E':
+                movePlayer(1, -1); // Northeast
+                break;
+            case '1':
+            case 'z':
+            case 'Z':
+                movePlayer(-1, 1); // Southwest
+                break;
+            case '3':
+            case 'c':
+            case 'C':
+                movePlayer(1, 1); // Southeast
+                break;
+            // Use potion
             case '5':
             case 'h':
             case 'H':
                 usePotion();
                 break;
+            // Restart
             case 'r':
             case 'R':
                 if (game.gameOver || game.victory) {
@@ -562,7 +669,9 @@ function restartGame() {
         victory: false,
         messages: [],
         map: {},
-        freeSpaces: []
+        freeSpaces: [],
+        explored: new Set(),
+        visible: new Set()
     };
 
     player = {
