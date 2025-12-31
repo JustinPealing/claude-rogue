@@ -521,6 +521,8 @@ keyboardProxy.addEventListener('input', (e) => {
                 movePlayer(1, 0);
                 break;
             case '5':
+            case 'h':
+            case 'H':
                 usePotion();
                 break;
             case 'r':
@@ -542,27 +544,6 @@ keyboardProxy.addEventListener('input', (e) => {
 keyboardProxy.addEventListener('keydown', (e) => {
     e.preventDefault();
     handleKey(e.code);
-
-    // Also try handling by key value
-    if (e.key) {
-        switch(e.key) {
-            case '2':
-                movePlayer(0, -1);
-                break;
-            case '8':
-                movePlayer(0, 1);
-                break;
-            case '4':
-                movePlayer(-1, 0);
-                break;
-            case '6':
-                movePlayer(1, 0);
-                break;
-            case '5':
-                usePotion();
-                break;
-        }
-    }
 });
 
 // Handle keyup as well for better Android compatibility
