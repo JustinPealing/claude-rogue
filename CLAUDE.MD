@@ -2,15 +2,20 @@
 
 ## Testing & Verification
 
-### Always Update Title for Testing
-When making changes to the web game, **always update the `<title>` tag in `index.html`** to verify that:
+### Always Update H1 and Title for Testing
+When making changes to the web game, **always update the `<h1>` tag in `index.html`** to verify that:
 - Changes are being deployed correctly
 - Browser cache is refreshed
 - The user sees the latest version
 
+**Important:** Update the `<h1>` tag (visible on page) rather than just the `<title>` tag (browser tab), as it's more immediately visible to users.
+
 Example:
 ```html
-<!-- Update version number or add descriptive text -->
+<!-- Update the H1 with version number -->
+<h1>DUNGEON ESCAPE - v1.2</h1>
+
+<!-- Also update the title tag -->
 <title>Dungeon Escape - v1.2 (Latest Fix)</title>
 ```
 
@@ -54,4 +59,4 @@ The game uses a hidden keyboard proxy input to trigger the Android virtual keybo
 2. **Keep autocomplete disabled** - prevents Android from interfering
 3. **Clear input value immediately** - prevents autocomplete suggestions
 4. **Test on actual Android devices** - emulators don't always match real behavior
-5. **Update title when deploying** - helps verify cache refresh
+5. **Update H1 when deploying** - helps verify cache refresh (more visible than title tag)
