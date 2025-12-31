@@ -423,7 +423,7 @@ canvas.addEventListener('touchstart', () => {
     keyboardProxy.focus();
 }, { passive: true });
 
-// Listen for keyboard events on the document
+// Listen for keyboard events on both document and the proxy input
 document.addEventListener('keydown', (e) => {
     // Prevent default browser actions (like scrolling with arrow keys)
     e.preventDefault();
@@ -432,9 +432,44 @@ document.addEventListener('keydown', (e) => {
     handleKey(e.code);
 });
 
-document.addEventListener('keyup', (e) => {
+// Handle input directly from keyboard proxy for Android
+keyboardProxy.addEventListener('input', (e) => {
+    const key = e.data;
+    if (key) {
+        switch(key) {
+            case '2':
+                movePlayer(0, -1);
+                break;
+            case '8':
+                movePlayer(0, 1);
+                break;
+            case '4':
+                movePlayer(-1, 0);
+                break;
+            case '6':
+                movePlayer(1, 0);
+                break;
+            case '5':
+                usePotion();
+                break;
+            case 'r':
+            case 'R':
+                if (game.gameOver || game.victory) {
+                    restartGame();
+                }
+                break;
+        }
+    }
+    // Clear the input to prevent autocomplete
+    keyboardProxy.value = '';
     e.preventDefault();
-    // Handle key release events if needed in the future
+});
+
+// Also handle keydown on the proxy
+keyboardProxy.addEventListener('keydown', (e) => {
+    e.preventDefault();
+    handleKey(e.code);
+    keyboardProxy.value = '';
 });
 
 // ===== GAME INITIALIZATION =====
