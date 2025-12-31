@@ -1,6 +1,12 @@
-body {
+html, body {
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+body {
+    padding: 10px;
     background-color: #000;
     color: #fff;
     font-family: monospace;
@@ -9,6 +15,7 @@ body {
     align-items: center;
     justify-content: flex-start;
     min-height: 100vh;
+    box-sizing: border-box;
 }
 
 h1 {
@@ -28,6 +35,8 @@ h1 {
 canvas {
     border: 2px solid #0f0;
     box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    max-width: 100%;
+    height: auto;
 }
 
 #ui {
@@ -148,4 +157,51 @@ canvas {
     color: #0f0;
     margin-top: 10px;
     font-size: 14px;
+}
+
+/* Prevent mobile scroll issues */
+#mobileInput {
+    position: relative;
+    -webkit-user-select: text;
+}
+
+/* Mobile optimizations */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 5px;
+    }
+
+    h1 {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+
+    #game {
+        margin-bottom: 10px;
+    }
+
+    canvas {
+        max-width: 98vw;
+    }
+
+    #ui {
+        width: 100%;
+        max-width: 95%;
+    }
+
+    .stats {
+        gap: 10px;
+        font-size: 12px;
+        flex-wrap: wrap;
+    }
+
+    .messages {
+        min-height: 60px;
+        font-size: 11px;
+        padding: 5px;
+    }
+
+    .instructions {
+        font-size: 11px;
+    }
 }

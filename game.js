@@ -3,6 +3,10 @@ const WIDTH = 50;
 const HEIGHT = 25;
 const MAX_LEVELS = 5;
 
+// Responsive font size
+const isMobile = window.innerWidth <= 768;
+const fontSize = isMobile ? 8 : 14;
+
 // Enemy templates
 const ENEMY_TYPES = {
     goblin: { char: 'g', color: '#8b4513', hp: 15, attack: 3, xp: 10 },
@@ -39,7 +43,7 @@ let entities = {
 const display = new ROT.Display({
     width: WIDTH,
     height: HEIGHT,
-    fontSize: 14
+    fontSize: fontSize
 });
 document.getElementById('game').appendChild(display.getContainer());
 
@@ -407,6 +411,19 @@ window.addEventListener("keydown", (e) => {
 
 // Mobile input handling
 const mobileInput = document.getElementById('mobileInput');
+
+// Prevent scroll on focus
+mobileInput.addEventListener('focus', function(e) {
+    // Save current scroll position
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+
+    // Restore scroll position after focus
+    setTimeout(() => {
+        window.scrollTo(scrollX, scrollY);
+    }, 0);
+});
+
 mobileInput.addEventListener('keydown', function(e) {
     switch(e.key) {
         case '2':
@@ -430,8 +447,11 @@ mobileInput.addEventListener('keydown', function(e) {
     this.value = '';
 });
 
+// Keep input focused for mobile, but don't auto-focus on load
 mobileInput.addEventListener('blur', function() {
-    setTimeout(() => this.focus(), 0);
+    if (isMobile) {
+        setTimeout(() => this.focus(), 0);
+    }
 });
 
 // ===== GAME INITIALIZATION =====
@@ -466,4 +486,10 @@ function restartGame() {
 
 // Start the game!
 restartGame();
-setTimeout(() => mobileInput.focus(), 100);
+
+// Only auto-focus on mobile after user interaction to avoid scroll
+if (isMobile) {
+    document.body.addEventListener('touchstart', function() {
+        mobileInput.focus();
+    }, { once: true });
+}
