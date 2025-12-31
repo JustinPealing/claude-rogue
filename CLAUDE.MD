@@ -1,27 +1,45 @@
 # Development Instructions for Claude
 
-## Testing & Verification
+## CRITICAL: Version Number Management
 
-### Always Update H1 and Title for Testing
-When making changes to the web game, **always update the `<h1>` tag in `index.html`** to verify that:
-- Changes are being deployed correctly
-- Browser cache is refreshed
-- The user sees the latest version
+### MANDATORY: Update Version for EVERY Change
+**For EVERY single change you make to the game, you MUST:**
 
-**Important:** Update the `<h1>` tag (visible on page) rather than just the `<title>` tag (browser tab), as it's more immediately visible to users.
+1. **Increment the version number** in both locations:
+   - `<h1>` tag in `index.html` (visible on page)
+   - `<title>` tag in `index.html` (browser tab)
 
-Example:
+2. **Tell the user the new version number** explicitly in your response
+   - Example: "**Updated to v1.8** - Fixed diagonal movement bug"
+
+3. **Use semantic versioning:**
+   - Major features: v1.6 → v2.0
+   - Minor features/improvements: v1.6 → v1.7
+   - Bug fixes: v1.6 → v1.6.1
+
+### Why This Matters
+- User needs to verify they're seeing the latest changes
+- Browser caching can show stale versions
+- Version number is the ONLY reliable way to confirm deployment
+
+**Example:**
 ```html
-<!-- Update the H1 with version number -->
-<h1>DUNGEON ESCAPE - v1.2</h1>
-
-<!-- Also update the title tag -->
-<title>Dungeon Escape - v1.2 (Latest Fix)</title>
+<!-- Update BOTH of these for EVERY change -->
+<h1>DUNGEON ESCAPE - v1.7 (FOV Fixed)</h1>
+<title>Dungeon Escape - v1.7 (FOV Fixed)</title>
 ```
 
-This helps confirm that the page has been properly refreshed on mobile/desktop browsers.
+### Your Response Template
+When making changes, always say:
+> "**Updated to v1.X** - [Brief description of change]. The version number in the title confirms you're seeing the latest version."
 
 ## Android Keyboard Support
+
+### IMPORTANT: Primary Platform
+**This game is primarily designed for Android keyboard input.**
+- Numpad/digit keys (1-9) are the PRIMARY controls
+- Letter keys (Q/E/Z/C, WASD) are SECONDARY convenience features
+- When making control decisions, prioritize Android keyboard compatibility
 
 ### Current Implementation
 The game uses a hidden keyboard proxy input to trigger the Android virtual keyboard:
@@ -36,21 +54,33 @@ The game uses a hidden keyboard proxy input to trigger the Android virtual keybo
    - This triggers Android virtual keyboard to appear
 
 3. **Input Handling** (`game.js:436-473`)
-   - **Input event listener**: Captures typed characters (2, 4, 8, 6, 5)
-   - **Keydown event listener**: Captures key codes for broader compatibility
+   - **Input event listener**: Captures typed characters (primary for Android)
+   - **Keydown event listener**: Captures key codes for desktop compatibility
    - Value cleared immediately after each keystroke
 
-### Mobile Controls
-- **2** = Move Up
-- **8** = Move Down
+### PRIMARY Controls (Android/Numpad - Highest Priority)
+```
+7  8  9     (NW) (Up) (NE)
+4  5  6     (Left)(Potion)(Right)
+1  2  3     (SW)(Down)(SE)
+```
+- **7** = Northwest diagonal
+- **8** = Move Down (not up!)
+- **9** = Northeast diagonal
 - **4** = Move Left
-- **6** = Move Right
 - **5** = Use Potion
+- **6** = Move Right
+- **1** = Southwest diagonal
+- **2** = Move Up (not down!)
+- **3** = Southeast diagonal
 - **R** = Restart
 
-### Desktop Controls
-- Arrow Keys or WASD for movement
-- H or 5 for potion
+**Note:** Numpad 2/8 seem backwards, but they match standard phone numpad layout (2 at top = up)
+
+### SECONDARY Controls (Desktop - Lower Priority)
+- Arrow Keys or WASD for cardinal movement
+- Q/E/Z/C for diagonal movement
+- H for potion
 - R for restart
 
 ## Best Practices
