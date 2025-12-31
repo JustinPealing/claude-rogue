@@ -152,6 +152,68 @@ function addMessage(text) {
     }
 }
 
+// ===== SAVE/LOAD SYSTEM =====
+function saveGame() {
+    const saveData = {
+        game: {
+            currentLevel: game.currentLevel,
+            gameOver: game.gameOver,
+            victory: game.victory,
+            messages: game.messages,
+            map: game.map
+        },
+        player: {
+            x: player.x,
+            y: player.y,
+            hp: player.hp,
+            maxHp: player.maxHp,
+            attack: player.attack,
+            gold: player.gold,
+            potions: player.potions
+        },
+        entities: {
+            enemies: entities.enemies,
+            items: entities.items
+        }
+    };
+
+    localStorage.setItem('roguelikeSave', JSON.stringify(saveData));
+}
+
+function loadGame() {
+    const saveData = localStorage.getItem('roguelikeSave');
+    if (!saveData) return false;
+
+    try {
+        const data = JSON.parse(saveData);
+
+        // Restore game state
+        game.currentLevel = data.game.currentLevel;
+        game.gameOver = data.game.gameOver;
+        game.victory = data.game.victory;
+        game.messages = data.game.messages;
+        game.map = data.game.map;
+
+        // Restore player state
+        player.x = data.player.x;
+        player.y = data.player.y;
+        player.hp = data.player.hp;
+        player.maxHp = data.player.maxHp;
+        player.attack = data.player.attack;
+        player.gold = data.player.gold;
+        player.potions = data.player.potions;
+
+        // Restore entities
+        entities.enemies = data.entities.enemies;
+        entities.items = data.entities.items;
+
+        return true;
+    } catch (e) {
+        console.error('Failed to load save data:', e);
+        return false;
+    }
+}
+
 // ===== COMBAT =====
 function attack(attacker, defender, attackerName, defenderName) {
     const damage = attacker.attack + ROT.RNG.getUniformInt(-2, 2);
@@ -190,6 +252,7 @@ function movePlayer(dx, dy) {
 
         enemyTurn();
         draw();
+        saveGame();
         return;
     }
 
@@ -217,6 +280,7 @@ function movePlayer(dx, dy) {
 
     enemyTurn();
     draw();
+    saveGame();
 }
 
 function usePotion() {
@@ -238,6 +302,7 @@ function usePotion() {
 
     enemyTurn();
     draw();
+    saveGame();
 }
 
 function descendStairs() {
@@ -246,10 +311,12 @@ function descendStairs() {
         addMessage("=== VICTORY! ===");
         addMessage("You escaped the dungeon!");
         draw();
+        saveGame();
     } else {
         game.currentLevel++;
         initLevel();
         draw();
+        saveGame();
     }
 }
 
@@ -269,6 +336,7 @@ function enemyTurn() {
                 game.gameOver = true;
                 addMessage("=== GAME OVER ===");
                 addMessage("You died! Press R to restart.");
+                saveGame();
                 return;
             }
         } else {
@@ -504,6 +572,9 @@ keyboardProxy.addEventListener('keyup', (e) => {
 
 // ===== GAME INITIALIZATION =====
 function restartGame() {
+    // Clear saved game
+    localStorage.removeItem('roguelikeSave');
+
     game = {
         currentLevel: 1,
         gameOver: false,
@@ -530,7 +601,12 @@ function restartGame() {
 
     initLevel();
     draw();
+    saveGame();
 }
 
 // Start the game!
-restartGame();
+if (!loadGame()) {
+    restartGame();
+} else {
+    draw();
+}
