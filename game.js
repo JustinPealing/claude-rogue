@@ -244,6 +244,7 @@ function loadGame() {
 
         // Reinitialize FOV after loading
         initFOV();
+        computeFOV();
 
         return true;
     } catch (e) {
@@ -591,11 +592,11 @@ keyboardProxy.addEventListener('input', (e) => {
 
         switch(char) {
             // Vertical movement
-            case '2':
-                movePlayer(0, -1);
-                break;
             case '8':
-                movePlayer(0, 1);
+                movePlayer(0, -1); // Up
+                break;
+            case '2':
+                movePlayer(0, 1); // Down
                 break;
             // Horizontal movement
             case '4':
